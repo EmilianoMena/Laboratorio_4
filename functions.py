@@ -3,8 +3,8 @@ import ccxt
 import pandas as pd 
 import numpy as np
 
-# Consumir datos de CCXT
-def f_consumo_datos(exchange,symbol):
+# Obtener datos de CCXT
+def f_datos(exchange,symbol):
     exchange_id = exchange
     exchange_class = getattr(ccxt, exchange_id)
     exchange = exchange_class({
@@ -17,88 +17,110 @@ def f_consumo_datos(exchange,symbol):
     df_exchange_ob = (pd.DataFrame(exchange_ob)).fillna(0)
     exchange_ob_ask = (pd.DataFrame(exchange_ob['asks'], columns = ['price','quantity'])).fillna(0)
     exchange_ob_bid = (pd.DataFrame(exchange_ob['bids'], columns = ['price','quantity'])).fillna(0)
-    timestamp = df_exchange_ob['datetime']
+    timestamps = df_exchange_ob['datetime']
     ask = exchange_ob_ask['price']
     bid = exchange_ob_bid['price']
     ask_volume = exchange_ob_ask['quantity']
     bid_volume = exchange_ob_bid['quantity']
     spread = ask - bid
+    high_price = df_exchange_ohlcv.iloc[:,2]
+    low_price = df_exchange_ohlcv.iloc[:,3]
     close_price = df_exchange_ohlcv.iloc[:,4]
+    price = (high_price+low_price+close_price)/3
+    total_volume = ask_volume+bid_volume
+    mid_price = (ask+bid)/2
+    vwap = (price*total_volume)/total_volume
+    n=len(timestamps)
     df=pd.DataFrame({
-        'Timestamp':timestamp,
+        'Exchange':[exchange_id]*n,
+        'Timestamp':timestamps,
         'Ask':ask,
         'Bid':bid,
         'Ask_Volume':ask_volume,
         'Bid_Volume':bid_volume,
         'Spread':spread,
-        'Close_Price':close_price
+        'Close_Price':close_price,
+        'Exchange':[exchange]*n,
+        'Total_Volume':total_volume,
+        'Mid_Price':mid_price,
+        'VWAP':vwap
     })
+    df = df.sort_values(by=['Spread'], ascending=True)
+    level = np.arange(1,n+1,1)
+    df['Level']=level
     return(df)
 
-def f_diccionario(m1,m2,m3,m4,m5,m6,m7,m8,m9):
-    diccionario={
-        'BTC/USDT':{
-            'Cryptocom':m1,
-            'Bitso':m4,
-            'Bitget':m7,
-        }, 
-        'DOGE/USDT':{
-            'Cryptocom':m2,
-            'Bitso':m5,
-            'Bitget':m8,
-        },
-        'ETH/USDT':{
-            'Cryptocom':m3,
-            'Bitso':m6,
-            'Bitget':m9
-        }         
-    }
+# 1. Consumir datos de CCXT
+def f_consumo_datos(df):
+    exchange=df['Exchange'][0]
+    timestamp=df['Timestamp']
+    ask=df['Ask']
+    bid=df['Bid']
+    ask_volume=df['Ask_Volume']
+    bid_volume=df['Bid_Volume']
+    spread=df['Spread']
+    close_price=df['Close_Price']
+    lista=[]
+    a=len(timestamp)
+    for i in range(a):
+        lista.append({
+            exchange:{
+                timestamp.iloc[i]:{
+                    'Ask':ask.iloc[i],
+                    'Bid':bid.iloc[i],
+                    'Ask_Volume':ask_volume.iloc[i],
+                    'Bid_Volume':bid_volume.iloc[i],
+                    'Spread':spread[i],
+                    'Close_Price':close_price[i]
+                }
+            }   
+        })
+    return(lista)
+
+def f_diccionario(b1,b2,b3,b4,b5,b6,b7,b8):
+    diccionario=b1+b2+b3+b4+b5+b6+b7+b8
     return(diccionario)
 
-# Visualizacion de Microestructura
-def f_consumo_datos_2(exchange,df):
-    df = df.sort_values(by=['Spread'], ascending=True)
-    n=len(df)
-    level = np.arange(1,n+1,1)
+#2. Visualización de Microestructura
+def f_datos_2(df):
+    exchange=df['Exchange'][0]
+    timestamp=df['Timestamp']
+    level=df['Level']
+    ask_volume=df['Ask_Volume']
+    bid_volume=df['Bid_Volume']
+    total_volume=df['Total_Volume']
+    mid_price=df['Mid_Price']
+    vwap=df['VWAP']
     df2=pd.DataFrame({
-        'Exchange' : [exchange]*n,
-        'Timestamp' : df['Timestamp'],
-        'Level' : level,
-        'Ask_Volume' : df['Ask_Volume'],
-        'Bid_Volume' : df['Bid_Volume'],
-        'Total_Volume' : df['Ask_Volume']+df['Bid_Volume'],
-        'Mid_Price' : df['Ask']+df['Bid']/2
+        'Exchange':exchange,
+        'Timestamp':timestamp,
+        'Level':level,
+        'Ask_Volume':ask_volume,
+        'Bid_Volume':bid_volume,
+        'Total_Volume':total_volume,
+        'Mid_Price':mid_price,
+        'VWAP':vwap
     })
-    df2['VWAP' ]= (df['Close_Price']*df2['Total_Volume'])/df2['Total_Volume']
     return(df2)
 
-def f_visualizacion_microestructura(s1,s2,s3,s4,s5,s6,s7,s8,s9):
-    df=pd.concat([s1,s2,s3,s4,s5,s6,s7,s8,s9])
+def f_visualizacion_microestructura(c1,c2,c3,c4,c5,c6,c7,c8,c9):
+    df=pd.concat([c1,c2,c3,c4,c5,c6,c7,c8,c9])
     return (df)
 
-# Modelado de Microestructura
-def f_modelado_microestructura(m1,m2,m3,m4,m5,m6,m7,m8,m9,df):
-    c1 = m1['Close_Price'].values.tolist()
-    c2 = m2['Close_Price'].values.tolist()
-    c3 = m3['Close_Price'].values.tolist()
-    c4 = m4['Close_Price'].values.tolist()
-    c5 = m5['Close_Price'].values.tolist()
-    c6 = m6['Close_Price'].values.tolist()
-    c7 = m7['Close_Price'].values.tolist()
-    c8 = m8['Close_Price'].values.tolist()
-    c9 = m9['Close_Price'].values.tolist()
-    s1 = m1['Spread'].values.tolist()
-    s2 = m2['Spread'].values.tolist()
-    s3 = m3['Spread'].values.tolist()
-    s4 = m4['Spread'].values.tolist()
-    s5 = m5['Spread'].values.tolist()
-    s6 = m6['Spread'].values.tolist()
-    s7 = m7['Spread'].values.tolist()
-    s8 = m8['Spread'].values.tolist()
-    s9 = m9['Spread'].values.tolist()
-    df2=pd.DataFrame()
-    df2['Timestamp']=df['Timestamp']
-    df2['Close'] = c1+c2+c3+c4+c5+c6+c7+c8+c9
-    df2['Spread'] = s1+s2+s3+s4+s5+s6+s7+s8+s9
-    #df2['Effective Spread']=[1]
+# 3. Modelado de Microestructura
+def f_datos_3(df):
+    timestamp=df['Timestamp']
+    close=df['Close_Price']
+    spread=df['Spread']
+    effective_spread=df['VWAP']
+    df2=pd.DataFrame({
+        'Timestamp':timestamp,
+        'Close':close,
+        'Spread':spread,
+        'Effective_Spread':effective_spread
+    })
     return(df2)
+
+def f_modelado_microestructura(d1,d2,d3,d4,d5,d6,d7,d8,d9):
+    df=pd.concat([d1,d2,d3,d4,d5,d6,d7,d8,d9])
+    return (df)
