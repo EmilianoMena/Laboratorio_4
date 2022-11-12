@@ -4,23 +4,23 @@ import plotly.express as px
 
 def f_grafica(c1,c2,c3,c4,c5,c6,c7,c8,c9):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=c1['Mid_Price'], y=c1['Timestamp'], name=c1['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c1['Timestamp'], y=c1['Mid_Price'], name='cryptocom BTC/USDT',
                             line=dict(color='blue', width=4)))
-    fig.add_trace(go.Scatter(x=c2['Mid_Price'], y=c2['Timestamp'], name=c2['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c2['Timestamp'], y=c2['Mid_Price'], name='cryptocom DOGE/USDT',
                             line=dict(color='black', width=4)))
-    fig.add_trace(go.Scatter(x=c3['Mid_Price'], y=c3['Timestamp'], name=c3['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c3['Timestamp'], y=c3['Mid_Price'], name='cryptocom ETH/USDT',
                             line=dict(color='red', width=4)))
-    fig.add_trace(go.Scatter(x=c4['Mid_Price'], y=c4['Timestamp'], name=c4['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c4['Timestamp'], y=c4['Mid_Price'], name='bitso BTC/USDT',
                             line=dict(color='green', width=4)))
-    fig.add_trace(go.Scatter(x=c5['Mid_Price'], y=c5['Timestamp'], name=c5['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c5['Timestamp'], y=c5['Mid_Price'], name='bitso DOGE/USD',
                             line=dict(color='yellow', width=4)))
-    fig.add_trace(go.Scatter(x=c6['Mid_Price'], y=c6['Timestamp'], name=c6['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c6['Timestamp'], y=c6['Mid_Price'], name='bitso ETH/USD',
                             line=dict(color='orange', width=4)))
-    fig.add_trace(go.Scatter(x=c7['Mid_Price'], y=c7['Timestamp'], name=c7['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c7['Timestamp'], y=c7['Mid_Price'], name='bitget BTC/USDT',
                             line=dict(color='pink', width=4)))
-    fig.add_trace(go.Scatter(x=c8['Mid_Price'], y=c8['Timestamp'], name=c8['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c8['Timestamp'], y=c8['Mid_Price'], name='bitget DOGE/USDT',
                             line=dict(color='gray', width=4)))
-    fig.add_trace(go.Scatter(x=c9['Mid_Price'], y=c9['Timestamp'], name=c9['Exchange'].iloc[0],
+    fig.add_trace(go.Scatter(x=c9['Timestamp'], y=c9['Mid_Price'], name='bitget ETH/USDT',
                             line=dict(color='lightseagreen', width=4)))
 
     # Edit the layout

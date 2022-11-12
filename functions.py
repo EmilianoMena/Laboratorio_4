@@ -83,7 +83,7 @@ def f_diccionario(b1,b2,b3,b4,b5,b6,b7,b8):
 
 #2. Visualización de Microestructura
 def f_datos_2(df):
-    exchange=df['Exchange'][0]
+    exchange=df['Exchange']
     timestamp=df['Timestamp']
     level=df['Level']
     ask_volume=df['Ask_Volume']
@@ -112,14 +112,14 @@ def f_datos_3(df):
     timestamp=df['Timestamp']
     close=df['Close_Price']
     spread=df['Spread']
-    effective_spread=df['VWAP']
-    df2=pd.DataFrame({
+    #effective_spread=
+    df3=pd.DataFrame({
         'Timestamp':timestamp,
         'Close':close,
         'Spread':spread,
-        'Effective_Spread':effective_spread
+        #'Effective_Spread':effective_spread
     })
-    return(df2)
+    return(df3)
 
 def f_modelado_microestructura(d1,d2,d3,d4,d5,d6,d7,d8,d9):
     df=pd.concat([d1,d2,d3,d4,d5,d6,d7,d8,d9])
